@@ -18,7 +18,7 @@ def main():
         # sort so train.csv is prioritized just in case
         filenames.sort(key=lambda x: 'train.csv' in x, reverse=True)
         for file in filenames:
-            if file.endswith('.csv'):
+            if file.endswith('.csv') or file.endswith('.data'):
                 files.append(os.path.join(root, file))
                 
     if not files:
@@ -30,7 +30,7 @@ def main():
         if df.shape[1] == 1:
             df = pd.read_csv(files[0], sep=';', encoding='unicode_escape')
     except Exception as e:
-        print(f"Error loading dataset: {{e}}")
+        print(f"Error loading dataset: {e}")
         return
 
     print("\n--- Part A: Preprocessing & EDA ---")
@@ -88,7 +88,7 @@ def main():
     plt.show()
     
     optimal_k = min(3, max_k)
-    print(f"Training K-Means model using optimal K={{optimal_k}}...")
+    print(f"Training K-Means model using optimal K={optimal_k}...")
     kmeans = KMeans(n_clusters=optimal_k, init='k-means++', random_state=42, n_init=10)
     clusters = kmeans.fit_predict(scaled_data)
     
@@ -98,8 +98,8 @@ def main():
     inertia = kmeans.inertia_
     sil_score = silhouette_score(scaled_data, clusters) if optimal_k > 1 else 0
     
-    print(f"Inertia (WCSS):     {{inertia:.2f}}")
-    print(f"Silhouette Score:   {{sil_score:.4f}}")
+    print(f"Inertia (WCSS):     {inertia:.2f}")
+    print(f"Silhouette Score:   {sil_score:.4f}")
     
     print("\nVisualizing clusters...")
     if scaled_data.shape[1] > 2:
